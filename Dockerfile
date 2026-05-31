@@ -33,6 +33,7 @@ RUN mkdir -p storage/logs storage/framework/cache/data \
 
 RUN echo "APP_KEY=" > .env
 
-EXPOSE $PORT
+EXPOSE 8080
+EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+CMD ["sh", "-c", "echo 'PORT=$PORT' && php artisan serve --host=0.0.0.0 --port=${PORT:-8080} 2>&1"]
