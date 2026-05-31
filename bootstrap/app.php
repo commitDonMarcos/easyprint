@@ -23,11 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ForceJsonResponse::class,
             EnsureSessionId::class,
         ]);
-
-        if (class_exists(\Sentry\Laravel\Integration::class) && !app()->runningUnitTests()) {
-            $middleware->append(\Sentry\Laravel\Integration::class);
-        }
     })
+
+
     ->withExceptions(function (Exceptions $exceptions) {
         if (class_exists(\Sentry\Laravel\Integration::class) && !app()->runningUnitTests()) {
             $exceptions->reportable(function (\Throwable $e) {
