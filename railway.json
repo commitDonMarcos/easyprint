@@ -1,11 +1,13 @@
 {
+  "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile"
+    "builder": "NIXPACKS",
+    "buildCommand": "composer install --no-dev --optimize-autoloader && php artisan optimize && npm install && npm run build"
   },
   "deploy": {
+    "startCommand": "cp .env.example .env 2>/dev/null; php artisan key:generate --force 2>/dev/null; php artisan storage:link --force 2>/dev/null; php artisan migrate --force 2>/dev/null; php artisan serve --host=0.0.0.0 --port=$PORT",
     "healthcheckPath": "/api/v1/health",
-    "healthcheckTimeout": 30,
+    "healthcheckTimeout": 60,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
