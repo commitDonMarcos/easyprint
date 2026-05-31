@@ -27,13 +27,17 @@ RUN npm run build 2>/dev/null; exit 0
 
 RUN mkdir -p storage/logs storage/framework/cache/data \
     storage/framework/sessions storage/framework/views \
-    storage/framework/testing bootstrap/cache
+    storage/framework/testing bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-RUN chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache
-
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN echo '#!/bin/bash' > /start.sh \
+    && echo 'if [ ! -f .env ]; then echo "APP_KEY=" > .env && php artisan key:generate --force; fi' >> /start.sh \
+    && echo 'php artisan storage:link --force 2>/dev/null || true' >> /start.sh \
+    && echo 'php artisan migrate --force 2>/dev/null || true &' >> /start.sh \
+    && echo 'php artisan serve --host=0.0.0.0 --port="${PORT:-8000}"' >> /start.sh \
+    && chmod +x /start.sh
 
 EXPOSE $PORT
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["/start.sh"]
