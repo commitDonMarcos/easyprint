@@ -31,13 +31,8 @@ RUN mkdir -p storage/logs storage/framework/cache/data \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-RUN echo '#!/bin/bash' > /start.sh \
-    && echo 'if [ ! -f .env ]; then echo "APP_KEY=" > .env && php artisan key:generate --force; fi' >> /start.sh \
-    && echo 'php artisan storage:link --force 2>/dev/null || true' >> /start.sh \
-    && echo 'php artisan migrate --force 2>/dev/null || true &' >> /start.sh \
-    && echo 'php artisan serve --host=0.0.0.0 --port="${PORT:-8000}"' >> /start.sh \
-    && chmod +x /start.sh
+RUN echo "APP_KEY=" > .env
 
 EXPOSE $PORT
 
-CMD ["/start.sh"]
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
