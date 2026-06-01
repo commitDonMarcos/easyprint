@@ -5,7 +5,7 @@
     "buildCommand": "composer install --no-dev --optimize-autoloader && npm install && npm run build"
   },
   "deploy": {
-    "startCommand": "cp .env.example .env && php artisan key:generate --force && php artisan storage:link --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080",
+    "startCommand": "echo 'APP_KEY=' > .env && php artisan key:generate --force && php artisan storage:link --force && php artisan migrate --force && php -S 0.0.0.0:8080 server.php",
     "healthcheckPath": "/api/v1/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
